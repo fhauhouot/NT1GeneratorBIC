@@ -16,7 +16,7 @@ namespace NT1Generator
             try
             {
                 string rootDeclarationDirectory = @"C:\\Users\\fabrice.hauhouot\\OneDrive - MANSA BANK\\Projets\\NT1\\Declarations\\202112\\";
-                string declarationFileName = "240515280720_202112_M_DEF_5_XML";
+                string declarationFileName = "240515280720_202112_M_DEF_7_XML";
 
                 XmlSerializer serializer;
 
