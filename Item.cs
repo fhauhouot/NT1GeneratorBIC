@@ -8,7 +8,7 @@ namespace NT1Generator
     [DelimitedRecord(";")]
     public class Item
     {
-        /*
+
         [FieldDelimiter(";")]
         [XmlAttribute("EntityCode")]
         public string EntityCode { get; set; }
@@ -27,19 +27,7 @@ namespace NT1Generator
 
         [FieldDelimiter(";")]
         [XmlElement("Message")]
-        public string Message { get; set; }
-        */
+        public string Message { get; set; }    
 
-        [FieldDelimiter(";")]
-        [XmlElement("Reference")]
-        public string Reference { get; set; }
-
-        [FieldDelimiter(";")]
-        [XmlElement("Severity")]
-        public string Severity { get; set; }
-
-        [FieldDelimiter(";")]
-        [XmlElement("Message")]
-        public string Message { get; set; }
     }
 }

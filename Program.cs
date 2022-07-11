@@ -15,8 +15,8 @@ namespace NT1Generator
 
             try
             {
-                string rootDeclarationDirectory = @"C:\\Users\\fabrice.hauhouot\\OneDrive - MANSA BANK\\Projets\\NT1\\Declarations\\202112\\";
-                string declarationFileName = "240515280720_202112_M_DEF_7_XML";
+                string rootDeclarationDirectory = @"C:\\Users\\fabrice.hauhouot\\OneDrive - MANSA BANK\\Projets et chantiers\\BIC\\Declarations_BIC\\202206\\";
+                string declarationFileName = "240515280720_202206_M_DEF_2_XML";
 
                 XmlSerializer serializer;
 
@@ -59,6 +59,15 @@ namespace NT1Generator
                     OutstandingAmount outstandingAmount;
                     InstallmentAmount installmentAmount;
 
+                    Dictionary<string, string> RegistrationNumbers = new Dictionary<string, string>();
+
+                    RegistrationNumbers.Add("384000042", "CISAS2019M2303");
+                    RegistrationNumbers.Add("384002415", "CIABJ2019B21427");
+                    RegistrationNumbers.Add("384002907", "CIABJ2019M04450");
+                    RegistrationNumbers.Add("384002599", "CIABJ2020B11503");
+                    RegistrationNumbers.Add("384000027", "CISAS2019M2766");
+                    RegistrationNumbers.Add("384001415", "CIABJ2017B15751");
+
                     Company company;
                     foreach (CompanyIn companyIn in companiesIn)
                     {
@@ -68,32 +77,50 @@ namespace NT1Generator
                         company.CompanyName = companyIn.CompanyName;
                         company.CustomerCode = companyIn.CustomerCode;
                         company.EstablishmentDate = companyIn.EstablishmentDate;
-                        company.IndustrySector = companyIn.IndustrySector;
-
-                        if (company.IndustrySector == "ProductionAndDistributionOfWaterSanitationWasteTreatmentAndD")
+                    
+                        if (companyIn.IndustrySector == "ProductionAndDistributionOfWaterSanitationWasteTreatmentAndD")
                         {
                             company.IndustrySector = "ProductionAndDistributionOfWaterSanitationWasteTreatmentAndDepollution";
                         }
-
-                        /*
-                        if (company.IndustrySector == "ProductionAndDistributionOfWaterSanitationWasteTreatmentAndD")
+                        else
                         {
-                            company.IndustrySector = "ProductionAndDistributionOfWaterSanitationWasteTreatmentAndDepollution";
+                            company.IndustrySector = companyIn.IndustrySector;
                         }
-                        */
 
-                        company.LegalForm = companyIn.LegalForm;
+                        if (companyIn.LegalForm == "AnonimousSociety")
+                        {
+                            company.LegalForm = "JointLiabilityCompany";
+                        }
+                        else
+                        {
+                            company.LegalForm = companyIn.LegalForm;
+                        }
+                        
                         company.TradeName = companyIn.TradeName;
                         company.EconomicStatus = companyIn.EconomicStatus;
                         company.Residency = companyIn.Residency;
                         company.Nationality = companyIn.Nationality;
-                        company.Sigle = companyIn.Sigle;
+
+                        if (String.IsNullOrEmpty(companyIn.Sigle))
+                        {
+                            company.Sigle = companyIn.TradeName;
+                        }
+                        else
+                        {
+                            company.Sigle = companyIn.TradeName;
+                        }
+                        
                         company.AnnualSales = "0";
                         company.NumberOfEmployees = "0";
                         company.PaiementIncident = "0";
 
                         identificationNumbers = new IdentificationNumbers();
-                        identificationNumbers.RegistrationNumber = companyIn.RegistrationNumber;
+
+                        if (RegistrationNumbers.ContainsKey(company.CustomerCode))
+                            identificationNumbers.RegistrationNumber = RegistrationNumbers[company.CustomerCode];
+                        else 
+                            identificationNumbers.RegistrationNumber = companyIn.RegistrationNumber;
+
                         identificationNumbers.RegistrationNumberIssuerCountry = companyIn.RegistrationNumberCountry;
                         identificationNumbers.TaxNumber = companyIn.TaxNumber;
                         identificationNumbers.TaxNumberIssuerCountry = companyIn.TaxNumberIssuerCountry;
@@ -101,6 +128,9 @@ namespace NT1Generator
 
                         contacts = new Contacts();
                         contacts.MobilePhone = companyIn.MobilePhone;
+                        if (company.CustomerCode == "384002390") contacts.MobilePhone = "+22645304430";
+
+
                         company.Contacts = contacts;
 
                         mainAddress = new MainAddress();
@@ -149,6 +179,12 @@ namespace NT1Generator
                             identificationNumbers.NationalIDExpirationDate = individualIn.NationalIDExpirationDate;
                         if (!String.IsNullOrEmpty(individualIn.NationalIDIssuerCountry))
                             identificationNumbers.NationalIDIssuerCountry = individualIn.NationalIDIssuerCountry;
+
+                        if (individual.CustomerCode == "384001561")
+                        {
+                            individual.Nationality = "SN";
+                            identificationNumbers.NationalIDIssuerCountry = "SN";
+                        }
 
                         // PassportNumber
                         if (!String.IsNullOrEmpty(individualIn.PassportNumber))
@@ -322,7 +358,7 @@ namespace NT1Generator
                     }
 
                     FileHelperEngine<Item> itemsEngine = new FileHelperEngine<Item>();
-                    itemsEngine.WriteFile(rootDeclarationDirectory + "Data.CSV", batchResponse.Items.Where(i => i.Severity == "ERREUR").ToList());
+                    itemsEngine.WriteFile(rootDeclarationDirectory + "Data.CSV", batchResponse.Items/*.Where(i => i.Severity == "ERREUR")*/.ToList());
                 }
 
             }
